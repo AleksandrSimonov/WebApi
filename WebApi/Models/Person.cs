@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebApi.Tables
+namespace WebApi.Models
 {
     /// <summary>
     /// Модель таблицы в БД

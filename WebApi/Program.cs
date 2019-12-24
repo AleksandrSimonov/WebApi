@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System.Configuration;
-using System.Data.Entity;
 
 namespace WebApi
 {

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-
+using WebApi.DataBaseContext;
 
 namespace WebApi
 {
@@ -38,33 +38,37 @@ namespace WebApi
         {
             if (services == null)
             {
-                throw new NullReferenceException("services не может быть null");
+                throw new NullReferenceException(LogConst.ServiceIsNull);
             }
-            services.AddControllers();
-            services.AddDbContext<CreateoTestContext>(options => options.UseSqlServer(_Configuration.GetConnectionString("ConnectionStrings")));
+            services.AddControllers(); // позволяет использовать контроллеры, но без представлений
+            services.AddDbContext<TestDBContext>(options => options.UseSqlServer(_Configuration.GetConnectionString("ConnectionStrings")));
         }
 
         /// <summary>
-        ///  устанавливает, как приложение будет обрабатывать запрос
+        /// устанавливает, как приложение будет обрабатывать запрос
         /// </summary>
         /// <param name="app"> Содержит методы для установки компонентов, которые обрабатывают запрос</param>
-        /// <param name="env">Представляет собой информацию о среде, в которой запускается приложение</param>
+        /// <param name="env"> Представляет собой информацию о среде, в которой запускается приложение</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // если приложение в процессе разработки
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();  // вывод подробных ошибок
             }
 
-            app.UseHttpsRedirection();
+            app.UseHttpsRedirection(); // добавляет для проекта переадресацию на тот же ресурс только по протоколу https
+                                       // (если приложение имеет поддержку SSL)
 
-            app.UseRouting();
+            app.UseRouting();   // добавление возможности маршрутизации. 
 
-            app.UseAuthorization();
+            app.UseAuthorization(); // встраивает в конвейер компонент AuthorizationMiddleware,
+                                    // который управляет авторизацией пользователей и разграничивает доступ к ресурсам.
 
-            app.UseEndpoints(endpoints =>
+            app.UseEndpoints(endpoints =>  
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers(); // сопоставляет действия контроллера с запросами,
+                                            // используя маршрутизацию на основе атрибутов.
             });
         }
     }
