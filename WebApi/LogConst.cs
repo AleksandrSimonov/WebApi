@@ -11,11 +11,11 @@ namespace WebApi
     public static class LogConst
     {
         /// <summary>
-        /// Services не может быть null
+        /// Параметр не может быть null
         /// </summary>
         public static string ParamCannotBeNull(string paramName)
         {
-            return $"{paramName} null не может быть null";
+            return $"{paramName} не может быть null";
         }
 
         /// <summary>
@@ -94,12 +94,9 @@ namespace WebApi
         /// <summary>
         /// По запросу пользователя выдана вся таблица Person
         /// </summary>
-        public static string GetAllPersons
+        public static string GotEntireTable(string tableName)
         {
-            get
-            {
-                return "По запросу пользователя выдана вся таблица Person";
-            }
+            return $"По запросу пользователя выдана вся таблица {tableName}";
         }
 
         /// <summary>

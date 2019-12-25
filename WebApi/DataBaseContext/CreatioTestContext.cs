@@ -16,9 +16,9 @@ namespace WebApi.DataBaseContext
         private readonly ILogger<CreatioTestContext> _Logger;
 
         /// <summary>
-        /// Список записей в таблице Person
+        /// Список записей в таблице Contact
         /// </summary>
-        public DbSet<Person> Contact { get; set; }
+        public DbSet<Contact> Contact { get; set; }
 
         /// <summary>
         /// Инициализация контекста

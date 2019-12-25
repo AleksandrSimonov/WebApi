@@ -38,10 +38,11 @@ namespace WebApi
         {
             if (services == null)
             {
-                throw new NullReferenceException(LogConst.ServiceIsNull);
+                throw new NullReferenceException(LogConst.ParamCannotBeNull(nameof(services)));
             }
             services.AddControllers(); // позволяет использовать контроллеры, но без представлений
-            services.AddDbContext<TestDBContext>(options => options.UseSqlServer(_Configuration.GetConnectionString("ConnectionStrings")));
+            services.AddDbContext<TestDBContext>(options => options.UseSqlServer(_Configuration.GetConnectionString("TestDBConnectionString")));
+            services.AddDbContext<CreatioTestContext>(options => options.UseSqlServer(_Configuration.GetConnectionString("CreatioTestDBConnectionString")));
         }
 
         /// <summary>

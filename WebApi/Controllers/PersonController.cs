@@ -19,11 +19,6 @@ namespace WebApi.Controllers
     public class PersonController : ControllerBase
     {
         /// <summary>
-        /// Имя таблицы в БД
-        /// </summary>
-        private readonly string TableName;
-
-        /// <summary>
         /// Логгер контроллера
         /// </summary>
         private readonly ILogger<PersonController> _Logger;
@@ -37,24 +32,20 @@ namespace WebApi.Controllers
         /// Инициализация контроллера
         /// </summary>
         /// <param name="logger">Логгер</param>
-        public PersonController(ILogger<PersonController> logger, TestDBContext db)
+        public PersonController(ILogger<PersonController> logger, TestDBContext dataBaseContext)
         {
             if (logger == null)
             {
                 throw new NullReferenceException(LogConst.LoggerIsNotInitialized);
             }
-            if (db == null)
+            if (dataBaseContext == null)
             {
                 throw new NullReferenceException(LogConst.ContextIsNotInitialized);
             }
 
-            // получение имени таблицы в бд
-            var entityType = _DBContext.Model.FindEntityType(typeof(TestDBContext));
-            var schema = entityType.GetSchema();
-            TableName = entityType.GetTableName();
-
             _Logger = logger;
-            _DBContext = db;
+            _DBContext = dataBaseContext;
+
         }
 
         /// <summary>
@@ -65,8 +56,8 @@ namespace WebApi.Controllers
         [HttpGet]
         public Person[] Select()
         {
-             var persons = _DBContext.Person.ToList();
-            _Logger.LogInformation(LogConst.GetAllPersons);
+            var persons = _DBContext.Person.ToList();
+            _Logger.LogInformation(LogConst.GotEntireTable(nameof(_DBContext.Person)));
             return persons.ToArray();
         }
 
@@ -87,9 +78,9 @@ namespace WebApi.Controllers
             var person = _DBContext.Person.FirstOrDefault(p => p.Id == id);
             if (person == null)
             {
-                _Logger.LogInformation(LogConst.ElementNotFound(id, TableName));
+                _Logger.LogInformation(LogConst.ElementNotFound(id, nameof(_DBContext.Person)));
             }
-            _Logger.LogInformation(LogConst.ElementIsFound(id, TableName));
+            _Logger.LogInformation(LogConst.ElementIsFound(id, nameof(_DBContext.Person)));
             return person;
 
         }
@@ -105,8 +96,8 @@ namespace WebApi.Controllers
         {
             if (pers == null)
             {
-                _Logger.LogError(LogConst.ValueCannotBeNull);
-                throw new ArgumentException(LogConst.ValueCannotBeNull);
+                _Logger.LogError(LogConst.ParamCannotBeNull("Person"));
+                throw new ArgumentException(LogConst.ParamCannotBeNull("Person"));
             }
             var person = _DBContext.Person.FirstOrDefault(p => p.Id == pers.Id);
             if (person == null)
@@ -115,11 +106,11 @@ namespace WebApi.Controllers
                 {
                     _DBContext.Person.Add(pers);
                     _DBContext.SaveChanges();
-                    _Logger.LogInformation(LogConst.AddedElement(TableName));
+                    _Logger.LogInformation(LogConst.AddedElement(nameof(_DBContext.Person)));
                     return "Элемент добавлен в БД";
                 } catch (Exception ex)
                 {
-                    _Logger.LogError(ex, LogConst.ElementNotAdded(TableName));
+                    _Logger.LogError(ex, LogConst.ElementNotAdded(nameof(_DBContext.Person)));
                     return "Произошла ошибка при добавении в бд";
                 }
             }
@@ -130,11 +121,11 @@ namespace WebApi.Controllers
                     person.Name = pers.Name;
                     _DBContext.Person.Update(person);
                     _DBContext.SaveChanges();
-                    _Logger.LogInformation(LogConst.ElementUpdated(pers.Id, TableName));
+                    _Logger.LogInformation(LogConst.ElementUpdated(pers.Id, nameof(_DBContext.Person)));
                     return "Элемент обновлен";
                 } catch (Exception ex)
                 {
-                    _Logger.LogError(LogConst.ElementNotUpdated(pers.Id, TableName));
+                    _Logger.LogError(LogConst.ElementNotUpdated(pers.Id, nameof(_DBContext.Person)));
                     return "Произошла ошибка при обновлении бд";
                 }
 
@@ -164,18 +155,18 @@ namespace WebApi.Controllers
                 {
                     _DBContext.Person.Remove(person);
                     _DBContext.SaveChanges();
-                    _Logger.LogInformation(LogConst.ElementDeleted(id, TableName));
+                    _Logger.LogInformation(LogConst.ElementDeleted(id, nameof(_DBContext.Person)));
                     return "Элемент успешно удален";
                 }
                 catch (Exception ex)
                 {
-                    _Logger.LogError(ex, LogConst.ElementNotDeleted(id, TableName));
+                    _Logger.LogError(ex, LogConst.ElementNotDeleted(id, nameof(_DBContext.Person)));
                     return "Произошла ошибка при удалении из бд";
                 }
             }
             else
             {
-                _Logger.LogInformation(LogConst.ElementNotFound(id, TableName));
+                _Logger.LogInformation(LogConst.ElementNotFound(id, nameof(_DBContext.Person)));
                 return "Элемент не найден";
             }
 
